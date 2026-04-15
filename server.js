@@ -2,7 +2,6 @@ const path = require("path");
 const crypto = require("crypto");
 const express = require("express");
 const http = require("http");
-const sqlite3 = require("sqlite3").verbose();
 const { Pool } = require("pg");
 const { Server } = require("socket.io");
 
@@ -24,7 +23,11 @@ const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 const rooms = new Map();
 const BOT_NAMES = ["Shark", "River", "Ace", "Bluff", "Dealer", "Nova", "Orbit", "Raptor"];
 const usePostgres = Boolean(process.env.DATABASE_URL);
-const sqliteDb = usePostgres ? null : new sqlite3.Database(path.join(__dirname, "poker.db"));
+let sqliteDb = null;
+if (!usePostgres) {
+  const sqlite3 = require("sqlite3").verbose();
+  sqliteDb = new sqlite3.Database(path.join(__dirname, "poker.db"));
+}
 const pgPool = usePostgres
   ? new Pool({
     connectionString: process.env.DATABASE_URL,
