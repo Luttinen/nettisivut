@@ -23,8 +23,14 @@ const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 const rooms = new Map();
 const BOT_NAMES = ["Shark", "River", "Ace", "Bluff", "Dealer", "Nova", "Orbit", "Raptor"];
 const usePostgres = Boolean(process.env.DATABASE_URL);
+const mustUsePostgres =
+  process.env.NODE_ENV === "production" || Boolean(process.env.RAILWAY_ENVIRONMENT);
 let sqliteDb = null;
 if (!usePostgres) {
+  if (mustUsePostgres) {
+    console.error("DATABASE_URL is missing. In Railway: add a PostgreSQL service and connect it to this app.");
+    process.exit(1);
+  }
   const sqlite3 = require("sqlite3").verbose();
   sqliteDb = new sqlite3.Database(path.join(__dirname, "poker.db"));
 }

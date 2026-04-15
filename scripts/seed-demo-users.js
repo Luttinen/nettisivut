@@ -3,8 +3,14 @@ const crypto = require("crypto");
 const { Pool } = require("pg");
 
 const usePostgres = Boolean(process.env.DATABASE_URL);
+const mustUsePostgres =
+  process.env.NODE_ENV === "production" || Boolean(process.env.RAILWAY_ENVIRONMENT);
 let sqliteDb = null;
 if (!usePostgres) {
+  if (mustUsePostgres) {
+    console.error("DATABASE_URL is required (PostgreSQL).");
+    process.exit(1);
+  }
   const sqlite3 = require("sqlite3").verbose();
   sqliteDb = new sqlite3.Database(path.join(__dirname, "..", "poker.db"));
 }

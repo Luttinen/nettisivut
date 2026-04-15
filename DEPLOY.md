@@ -13,7 +13,7 @@
 
 ## 4) Environment variables
 - Set `NODE_ENV=production`.
-- Ensure `DATABASE_URL` exists (auto from Railway when linked).
+- **`DATABASE_URL` is required** in production: add PostgreSQL in Railway and link it so this variable is set (SQLite is for local dev only).
 
 ## 5) Open app
 - Use deployed URL:
