@@ -1,0 +1,6 @@
+node_modules/
+.env
+.env.*
+poker.db
+*.db
+.DS_Store

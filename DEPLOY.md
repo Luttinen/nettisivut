@@ -1,11 +1,12 @@
 # Deploy Online (Railway)
 
-## 1) Push project to GitHub
-- Commit your project and push to a GitHub repository.
+## 1) Push project to GitHub (required files)
+- Commit **`package.json`**, **`package-lock.json`**, and **`Dockerfile`** together and push.
+- If `package-lock.json` is missing on GitHub, the Docker build (and any `npm ci`) **will fail**.
 
 ## 2) Create a Railway project
 - In Railway, create a new project from your GitHub repo.
-- Railway will run `npm install` and `npm start`.
+- This repo includes a **`Dockerfile`** at the root: Railway will **build with Docker** (not Railpack/Nixpacks), run `npm ci --omit=dev` in Linux, then `npm start` → `node server.js`.
 
 ## 3) Add Postgres service
 - In Railway project, add a PostgreSQL database.
@@ -21,10 +22,10 @@
   - `/index.html` for blackjack
   - `/health` for healthcheck
 
-## Troubleshooting (npm / Railpack)
-- **`npm ci` fails in the build** — usually `package.json` and `package-lock.json` are out of sync or the lockfile was not pushed. Run `npm install` locally, commit **both** files, and redeploy.
-- **Railpack** (build log mentions `mise`): add a **build** variable `RAILPACK_INSTALL_CMD` = `npm install --omit=dev --no-audit --no-fund` so the install step does not rely on strict `npm ci` if the lockfile still disagrees with the image.
-- **`npm warn config production`** — harmless; something sets the old `production` npm flag. Prefer `omit=dev` in CI; you can run `npm config delete production` on your machine to silence it.
+## Troubleshooting
+- **Build fails at `npm ci`** — run `npm install` locally, commit the updated `package-lock.json`, push, redeploy.
+- **Do not commit `node_modules`** — use the included `.gitignore`. If `node_modules` was committed before, remove it from git: `git rm -r --cached node_modules` then commit (keeps your local folder if present).
+- **`npm warn config production`** — harmless leftover npm setting; optional: `npm config delete production`.
 
 ## Notes
 - Local development still uses SQLite file `poker.db`.
