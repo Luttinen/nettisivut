@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="table">
+      <h1>Blackjack</h1>
+      <p class="game-link-wrap">
+        <a class="game-link" href="holdem.html">Play Texas Hold'em</a>
+      </p>
+
+      <section class="status-panel">
+        <p><strong>Bankroll:</strong> $<span id="bankroll">1000</span></p>
+        <p><strong>Current Bet:</strong> $<span id="bet">50</span></p>
+        <p id="message">Press Deal to start.</p>
+      </section>
+
+      <section class="bet-controls">
+        <button id="bet-minus">- $10</button>
+        <button id="bet-plus">+ $10</button>
+      </section>
+
+      <section class="hand">
+        <h2>Dealer <span id="dealer-score"></span></h2>
+        <div id="dealer-cards" class="cards"></div>
+      </section>
+
+      <section class="hand">
+        <h2>Player <span id="player-score"></span> <span id="hand-label"></span></h2>
+        <div id="player-cards" class="cards"></div>
+        <div id="split-hands" class="split-hands"></div>
+      </section>
+
+      <section class="actions">
+        <button id="deal-btn">Deal</button>
+        <button id="hit-btn" disabled>Hit</button>
+        <button id="stand-btn" disabled>Stand</button>
+        <button id="double-btn" disabled>Double</button>
+        <button id="split-btn" disabled>Split</button>
+        <button id="new-round-btn" disabled>New Round</button>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "holdem-multiplayer",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed:demo": "node scripts/seed-demo-users.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.20.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.3",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Texas Hold'em</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="holdem.css" />
+  </head>
+  <body>
+    <div class="app-shell" id="app-shell" data-in-room="false">
+      <header class="game-header">
+        <div class="game-header__brand">
+          <span class="game-header__logo" aria-hidden="true"></span>
+          <div class="game-header__titles">
+            <span class="game-header__name">PokerLive</span>
+            <span class="game-header__sub" id="header-hand-line">Texas Hold'em</span>
+          </div>
+        </div>
+        <div class="game-header__meta" id="header-meta" hidden>
+          <span class="pill pill--live" id="header-live-pill" hidden>Live</span>
+          <span class="header-meta__item" id="header-blinds">Blinds — / —</span>
+          <span class="header-meta__item" id="header-seats">0 / 6 players</span>
+          <span class="header-meta__item header-meta__item--phase" id="header-phase">Lobby</span>
+          <span class="header-meta__item header-meta__item--timer" id="header-turn-timer" hidden></span>
+        </div>
+        <div class="game-header__actions">
+          <span class="connection-badge" id="connection-badge" title="Socket">Offline</span>
+          <a class="btn btn--ghost btn--leave" href="index.html">Leave</a>
+        </div>
+      </header>
+
+      <div class="game-layout">
+        <main class="poker-table">
+          <div class="felt-wrap">
+            <div class="felt-oval">
+              <section class="table-center">
+                <div class="pot-strip">
+                  <span class="pot-strip__label" id="pot-phase-label">Pot</span>
+                  <div class="pot-strip__value">
+                    <span class="chip-icon" aria-hidden="true"></span>
+                    <span id="pot">0</span>
+                  </div>
+                </div>
+                <div id="community-cards" class="cards-row cards-row--board"></div>
+              </section>
+            </div>
+          </div>
+
+          <section class="lobby" id="lobby">
+            <div class="lobby-row">
+              <input id="name-input" placeholder="Username" maxlength="16" />
+              <input id="password-input" type="password" placeholder="Password (min 6 chars)" maxlength="72" />
+              <button type="button" id="register-btn" class="btn btn--gold">Register</button>
+              <button type="button" id="login-btn" class="btn btn--gold">Login</button>
+            </div>
+            <div class="lobby-row">
+              <input id="room-input" placeholder="Room code" maxlength="8" />
+              <button type="button" id="create-room-btn" class="btn btn--gold">Create Room</button>
+              <button type="button" id="join-room-btn" class="btn btn--gold">Join Room</button>
+            </div>
+            <div class="lobby-row webcam-row">
+              <video id="webcam-preview" autoplay muted playsinline></video>
+              <canvas id="webcam-canvas" width="160" height="120" hidden></canvas>
+              <img id="avatar-preview" alt="Avatar preview" />
+              <button type="button" id="start-camera-btn" class="btn btn--muted">Start Camera</button>
+              <button type="button" id="capture-avatar-btn" class="btn btn--muted" disabled>Capture Avatar</button>
+              <button type="button" id="save-avatar-btn" class="btn btn--muted" disabled>Save Avatar</button>
+            </div>
+            <p class="lobby-hint">Create account once, then login and play with friends.</p>
+          </section>
+
+          <div id="hero-hand" class="hero-hand" hidden></div>
+
+          <section id="players" class="players"></section>
+
+          <section class="controls">
+            <div class="controls__bar">
+              <p class="controls__status" id="status">Press New Hand to start.</p>
+              <p class="controls__room"><span class="muted">Room</span> <span id="room-code">-</span></p>
+            </div>
+            <div class="action-row action-row--play">
+              <button type="button" id="fold-btn" class="btn btn--fold" disabled>Fold</button>
+              <button type="button" id="check-call-btn" class="btn btn--call" disabled>Check / Call</button>
+              <button type="button" id="raise-btn" class="btn btn--raise" disabled>Raise</button>
+            </div>
+            <div class="betting-panel" id="betting-panel" hidden>
+              <div class="betting-panel__top">
+                <label class="betting-panel__label" for="bet-slider"><span id="bet-slider-title">Raise to</span></label>
+                <span class="betting-panel__value" id="bet-target-label">$0</span>
+              </div>
+              <input type="range" id="bet-slider" min="0" max="1000" value="0" step="1" />
+              <div class="betting-panel__manual">
+                <label class="betting-panel__manual-label" for="bet-amount-input">Exact total</label>
+                <input
+                  type="number"
+                  id="bet-amount-input"
+                  class="betting-panel__number"
+                  inputmode="numeric"
+                  min="0"
+                  max="999999"
+                  step="1"
+                />
+              </div>
+              <p class="betting-panel__hint" id="betting-hint" hidden></p>
+              <div class="betting-panel__presets" id="bet-presets">
+                <button type="button" class="btn btn--muted btn--compact" data-preset="min">Min</button>
+                <button type="button" class="btn btn--muted btn--compact" data-preset="third">⅓ pot</button>
+                <button type="button" class="btn btn--muted btn--compact" data-preset="half">½ pot</button>
+                <button type="button" class="btn btn--muted btn--compact" data-preset="pot">Pot</button>
+                <button type="button" class="btn btn--muted btn--compact" data-preset="max">Max</button>
+              </div>
+              <div class="betting-panel__auto">
+                <label class="betting-panel__auto-label" for="auto-action-select">Automation</label>
+                <select id="auto-action-select" class="betting-panel__auto-select">
+                  <option value="off">Off — you act manually</option>
+                  <option value="check_fold">Check if free, else fold</option>
+                  <option value="call_any">Call or check automatically</option>
+                  <option value="check_only">Auto-check only (never bet/fold)</option>
+                </select>
+              </div>
+            </div>
+            <div class="action-row action-row--host">
+              <button type="button" id="new-hand-btn" class="btn btn--muted" disabled>New Hand</button>
+              <button type="button" id="add-bot-btn" class="btn btn--muted" disabled>Add Bot</button>
+              <button type="button" id="remove-bot-btn" class="btn btn--muted" disabled>Remove Bot</button>
+              <button type="button" id="force-end-btn" class="btn btn--warn" disabled>Force End Hand</button>
+              <button type="button" id="reset-chips-btn" class="btn btn--warn" disabled>Reset Chips</button>
+            </div>
+            <div class="action-row action-row--admin">
+              <select id="kick-player-select" disabled>
+                <option value="">Select player to kick</option>
+              </select>
+              <button type="button" id="kick-player-btn" class="btn btn--muted" disabled>Kick Player</button>
+            </div>
+          </section>
+        </main>
+
+        <aside class="chat-panel" aria-label="Table chat">
+          <div class="chat-panel__head">
+            <h2>Table Chat</h2>
+            <p class="chat-panel__sub" id="chat-online-count">—</p>
+          </div>
+
+          <div class="host-stream-panel" id="host-stream-panel" hidden>
+            <h3 class="host-stream-panel__title">Pelaajavideot</h3>
+            <p class="host-stream-panel__hint" id="host-stream-hint">
+              Jokainen pelaaja voi lähettää kameran ja mikin suoraan muille (WebRTC). Jotkut verkot tarvitsevat TURN-palvelimen.
+            </p>
+            <div id="host-stream-host-ui" class="host-stream-host-ui">
+              <div class="host-stream-host-actions">
+                <button type="button" id="host-table-stream-start" class="btn btn--gold">Käynnistä oma kamera + mikki</button>
+                <button type="button" id="host-table-stream-stop" class="btn btn--muted" hidden>Lopeta lähetys</button>
+              </div>
+              <video id="host-table-self-preview" class="host-stream-video" autoplay muted playsinline hidden></video>
+            </div>
+            <div id="host-stream-viewer-ui" class="host-stream-viewer-ui">
+              <div id="remote-streams-grid" class="remote-streams-grid" aria-live="polite"></div>
+              <p class="host-stream-placeholder" id="host-table-placeholder">Ei muita videoita — pelaajat näkyvät tässä kun he käynnistävät kameran.</p>
+            </div>
+          </div>
+
+          <div class="chat-panel__feed">
+            <p class="chat-system">Table chat is not wired yet — use your voice or another app for now.</p>
+          </div>
+          <div class="chat-panel__input">
+            <input type="text" placeholder="Say something…" disabled />
+            <button type="button" class="btn btn--send" disabled aria-label="Send" title="Soon">➤</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="holdem.js"></script>
+  </body>
+</html>
