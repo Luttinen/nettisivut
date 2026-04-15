@@ -1,0 +1,4 @@
+# Railway (Nixpacks builder): use lockfile but avoid strict `npm ci` failures when lock/GitHub drift.
+# Production: omit devDependencies (nodemon, sqlite3).
+[phases.install]
+cmds = ["npm install --omit=dev --no-audit --no-fund"]
